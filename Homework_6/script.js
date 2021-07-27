@@ -74,7 +74,7 @@ console.log(str.match(/ab+a/g));
 регулярные выражения.*/
 
 function validPhone() {
-    let regexp = /^\+\d[\d\(\)\ -]{4,14}\d$/;
+    let regexp = /^\+?\d[\d\(\)\ -]{4,14}\d$/;
     let numPhone = prompt('номер телефона');
     let valid = regexp.test(numPhone);
     return valid;
@@ -102,3 +102,13 @@ function validMail() {
 }
 
 console.log(validMail());
+
+/*Напишите ф-цию, которая из полного адреса с параметрами и без,
+например: https://tech.onliner.by/2018/04/26/smart-do-200/?
+utm_source=main_tile&utm_medium=smartdo200#zag3 , получит адрес
+доменного имени (https://tech.onliner.by), остальную часть адреса без
+параметров (/2018/04/26/smart-do-200/), параметры
+(utm_source=main_tile&utm_medium=smartdo200) и хеш (#zag3). В адресе
+может и не быть каких-либо составляющих. Ф-ция должна возвращать
+массив.*/
+
