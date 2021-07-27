@@ -73,3 +73,11 @@ console.log(str.match(/ab+a/g));
 телефона>). Функция должна возвращать true или false. Используйте
 регулярные выражения.*/
 
+function validPhone() {
+    let regexp = /^\+\d[\d\(\)\ -]{4,14}\d$/;
+    let numPhone = prompt('номер телефона');
+    let valid = regexp.test(numPhone);
+    return valid;
+}
+
+console.log(validPhone());
