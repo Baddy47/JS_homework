@@ -10,17 +10,24 @@ let ToDo = function () {
     const addTask = body.querySelector('.add_todo');
     const listTask = body.querySelector('.list_todo');
     
+    input.addEventListener('keydown', (event) => {
+        if (event.code == 'Enter') 
+        this.createlistItem(input.value)
+    })
+
+    input.addEventListener('keyup', (event) => {
+        if (event.code == 'Enter') 
+        input.value = '';
+    })
     
-    
-    addTask.addEventListener('click', (e) => {
-        //listTask.innerHTML += `<li>${input.value}</li>`;
+    addTask.addEventListener('click', (event) => {
         if (input.value === '') return;
-        createlistItem(input.value);
+        this.createlistItem(input.value);
         input.value = '';
         this.list.push(input.value);
     })
 
-    createlistItem = function (value) {
+    this.createlistItem = function (value) {
         const listItem = document.createElement('li');
         const listBtn = document.createElement('button');
 
@@ -31,11 +38,11 @@ let ToDo = function () {
         listBtn.className = 'btn_list_item';
         listItem.appendChild(listBtn);
 
-        listBtn.addEventListener('click', (e) => {
+        listBtn.addEventListener('click', (event) => {
             listTask.removeChild(listItem);
         })
 
-        listItem.addEventListener('click', (e) => {
+        listItem.addEventListener('click', (event) => {
             listItem.classList.toggle('list_item_complete');
         })
     }
