@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #0dfff3;
+}
+
+.sheet_todo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #0d040a;
+    width: 30%;
+    min-height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6%;
+    text-align: center;
+    border-radius: 10px;
+    border: 3px solid #fe59c2;
+    box-shadow: 0 0 15px 5px #fe59c2, 0 0 20px 10px #0d040a;
+}
+
+.heading {
+    font-size: 32px;
+    font-family: 'Monoton', cursive;
+    text-transform: uppercase;
+    color: #fe59c2;
+    text-shadow: 1px 2px 10px #fe59c2;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.input_todo {
+    position: relative;
+    display: flex;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    width: 300px;
+    height: 40px;
+    background-color: #0dfff3;
+}
+
+.text_todo {
+    width: 250px;
+    height: 30px;
+    font-family: 'Chicle', cursive;
+    font-size: 24px;
+    text-shadow: 0 1px 4px #fe59c2;
+    color: #0d040a;
+    outline: none;
+    border: transparent;
+    padding: 5px;
+    background-color: #0dfff3;
+}
+
+.text_todo:focus {
+    box-shadow: 0 0 10px 2px #ff7a0d;
+}
+
+.add_todo {
+    position: absolute;
+    right: 5px;
+    top: 15%;
+    width: 30px;
+    height: 28px;
+    background-color: #0d040a;
+    cursor: pointer;
+}
+
+.add_todo::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+    background-image: url(/add.png);
+    background-position: center;
+}
+
+.add_todo:hover {
+    box-shadow: 0 0 10px 10px #ff7a0d;
+}
+
+.list_todo {
+    width: 50%;
+    list-style: none;
+}
+
+.list_item_complete {
+    text-decoration: line-through;
+    text-decoration-color: #0d040a;
+}
+
+.item_todo {
+    display: flex;
+    position: relative;
+    color: #fe59c2;
+    font-size: 30px;
+    font-family: 'Lobster', cursive;
+    text-align: start;
+    margin: 20px 0 20px 0;
+    text-shadow: 0 0 5px  #0dfff3;
+}
+
+.btn_list_item {
+    background-image: url(/delete.png);
+    background-position: center;
+    background-size: cover;
+    cursor: pointer;
+    background-color: #0d040a;
+    position: absolute;
+    left: 270px;
+    top: 15%;
+    width: 30px;
+    height: 28px;
+    border: none;
+}
