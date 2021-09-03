@@ -15,8 +15,15 @@
 .galerry__wrapper {
     display: flex;
     flex-wrap: wrap;
+    width: 1500px;
+    height: 850px;
 }
 
 .galery__item {
     margin: 10px;
+    display: none;
+}
+
+.active {
+    display: block;
 }
