@@ -1,17 +1,17 @@
 const Filter = function() {
 
     let items = document.querySelectorAll('.galery__item');
-    items.forEach(item => {
-        
-        return item;
-    })
+    
     console.log(items);
     let buttons = document.querySelectorAll('.btn');
     buttons.forEach(button => {
         button.addEventListener('click', function(event) {
             
             if (event.target.dataset.set == 'all') {
-                items.classList.add('active');
+                items.forEach(item => {
+                    item.classList.add('active');
+                })
+                
             }
             if (event.target.dataset.set == 'red') {
                 console.log('red');
