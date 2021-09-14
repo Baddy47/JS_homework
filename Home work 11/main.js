@@ -71,15 +71,17 @@ class Contacts {
 }
 
 class ContactsApp {
-
+    constructor() {
+        this.init();
+    }
+    
+    init() {
+        const addButtonContact = document.querySelector('contact-form__show');
+        
+        addButtonContact.addEventListener('click', () =>
+            console.log('click')
+        )     
+    }
 }
 
-let contacts = new Contacts();
-contacts.add({email: 'Alex'});
-contacts.add({name: 'Anna', phone: 375293279570});
-contacts.add({name: 'Ariana', phone: 375296824826});
-contacts.edit(2, {name: 'Andrei'});
-contacts.edit(1, {name: 'Alla'});
-contacts.remove(1);
-
-console.log(contacts.get());
+//new ContactsApp();
