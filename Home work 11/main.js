@@ -78,13 +78,13 @@ class ContactsApp extends Contacts {
     init() {
         const addButtonContact = document.querySelector('.contact-form__show');
         const contactForm = document.querySelector('.contact-form');
-        const formInput = document.querySelectorAll('.form__input');
+        //const formInput = document.querySelectorAll('.form__input');
         this.saveContact = document.querySelector('.form__save-button');
         this.contactList = document.querySelector('.contact-list');
-        this.contactName = document.querySelector('.input__name');
-        this.contactPhone = document.querySelector('.input__phone');
-        this.contactEmail = document.querySelector('.input__email');
-        this.contactAddress = document.querySelector('.input__address');
+        this.newContactName = document.querySelector('.input__name');
+        this.newContactPhone = document.querySelector('.input__phone');
+        this.newContactEmail = document.querySelector('.input__email');
+        this.newContactAddress = document.querySelector('.input__address');
         
         addButtonContact.addEventListener('click', () =>
             contactForm.classList.add('active'),
@@ -92,93 +92,143 @@ class ContactsApp extends Contacts {
         addButtonContact.addEventListener('mouseup', () =>
             addButtonContact.classList.add('hidden')
         )
-        this.saveContact.addEventListener('click', () =>
-           contactForm.classList.remove('active') 
-        )
         this.saveContact.addEventListener('mouseup', () =>
             addButtonContact.classList.remove('hidden')
         )
         this.saveContact.addEventListener('click', event => {
+            contactForm.classList.remove('active'),
             this.onAdd(event);
-        });   
+        });
+        
+        const data = this.loadOutStorage();
+        if (data.length > 0) {
+            this.data = data;
+            this.updateList();
+        }
     }
     
+    saveInStorage(data) {
+        const string = JSON.stringify(data);
+        localStorage.setItem('contacts', string);
+    }
+
+    loadOutStorage() {
+        let data = JSON.parse(localStorage.getItem('contacts'));
+        if (!data || data.length == 0) return;
+        
+        data = data.map(user => {
+            user = new User(user.data);
+            return user;
+        })
+        
+        return data;
+    }
+
     updateList() {
         this.contactList.innerHTML = '';
         const data = this.get();
-        data.forEach(contc => {
+        data.forEach(contact => {
             const contactItem = document.createElement('li');
-            const contactName = document.createElement('div');
-            const contactPhone = document.createElement('div');
-            const contactEmail = document.createElement('div');
-            const contactAddress = document.createElement('div');
+            this.contactName = document.createElement('div');
+            this.contactPhone = document.createElement('div');
+            this.contactEmail = document.createElement('div');
+            this.contactAddress = document.createElement('div');
             const contactRemove = document.createElement('button');
-            const contactEdit = document.createElement('button');
+            this.contactEdit = document.createElement('button');
 
-            contactItem.classList.add('contact-item');
-            contactName.classList.add('contact-item_name');
-            contactPhone.classList.add('contact-item_phone');
-            contactEmail.classList.add('contact-item_email');
-            contactAddress.classList.add('contact-item_address');
-            contactRemove.classList.add('contact-item__remove');
-            contactEdit.classList.add('contact-item__edit');
+            contactItem.classList.add('contact-items');
+            this.contactName.classList.add('contact-item_name', 'contact-item');
+            this.contactPhone.classList.add('contact-item_phone', 'contact-item');
+            this.contactEmail.classList.add('contact-item_email', 'contact-item');
+            this.contactAddress.classList.add('contact-item_address', 'contact-item');
+            contactRemove.classList.add('contact-item__button');
+            this.contactEdit.classList.add('contact-item__button');
 
             contactRemove.innerHTML = 'Delete';
-            contactEdit.innerHTML = 'Edit';
+            this.contactEdit.innerHTML = 'Edit';
 
-            if (contc.data.name) contactName.innerHTML = contc.data.name;
-            if (contc.data.phone) contactPhone.innerHTML = contc.data.phone;
-            if (contc.data.email) contactEmail.innerHTML = contc.data.email;
-            if (contc.data.address) contactAddress.innerHTML = contc.data.address;
+            if (contact.data.name) this.contactName.innerHTML = contact.data.name;
+            if (contact.data.phone) this.contactPhone.innerHTML = contact.data.phone;
+            if (contact.data.email) this.contactEmail.innerHTML = contact.data.email;
+            if (contact.data.address) this.contactAddress.innerHTML = contact.data.address;
 
             this.contactList.append(contactItem);
-            contactItem.append(contactName, contactPhone, contactEmail, contactAddress, contactEdit, contactRemove);
+            contactItem.append(this.contactName, this.contactPhone, this.contactEmail, this.contactAddress, this.contactEdit, contactRemove);
 
-            contactEdit.addEventListener('click', event => {
+            this.contactEdit.addEventListener('click', event => {
                 this.onEdit(event);
-            });
-            contactRemove.addEventListener('click', event => {
-                this.onRemove(event);
+                this.contactEdit.addEventListener('click', event => {
+                    this.onSave(event, contact.data.id);
+                })
             });
             
-            this.onEdit(event, contc.data.id);
-            this.onRemove(event, contc.data.id);
+            contactRemove.addEventListener('click', event => {
+                this.onRemove(event, contact.data.id);
+            });
         });
+        this.saveInStorage(data);
     }
 
     onAdd(event) {
         if (!event) return;
-        const contactName = this.contactName.value;
-        const contactPhone = this.contactPhone.value;
-        const contactEmail = this.contactEmail.value;
-        const contactAddress = this.contactAddress.value;
+        
+        const newContactName = this.newContactName.value;
+        const newContactPhone = this.newContactPhone.value;
+        const newContactEmail = this.newContactEmail.value;
+        const newContactAddress = this.newContactAddress.value;
         
         const data = {
-            name: contactName || null,
-            phone: contactPhone || null,
-            email: contactEmail || null,
-            address: contactAddress || null
+            name: newContactName || null,
+            phone: newContactPhone || null,
+            email: newContactEmail || null,
+            address: newContactAddress || null
         }
         
-        
-        
-        this.contactName.value = '';
-        this.contactPhone.value = '';
-        this.contactEmail.value = '';
-        this.contactAddress.value = '';
+        this.newContactName.value = '';
+        this.newContactPhone.value = '';
+        this.newContactEmail.value = '';
+        this.newContactAddress.value = '';
 
         this.add(data);
         this.updateList();
     }
 
-    onEdit(event, id) {
+    onEdit(event) {
+        this.contactName.setAttribute('contenteditable', true);
+        this.contactPhone.setAttribute('contenteditable', true);
+        this.contactEmail.setAttribute('contenteditable', true);
+        //this.contactEmail.innerHTML = 'Email';
+        this.contactAddress.setAttribute('contenteditable', true);
+        //this.contactAddress.innerHTML = 'Address';
+        this.contactEdit.innerHTML = 'Save';
         
+        return event;
+    }
+
+    onSave(event, id) {
+        console.log(id);
+        event.target.setAttribute('contenteditable', false);
+        this.contactEdit.innerHTML = 'Edit';
+
+        const contactName = this.contactName.textContent;
+        const contactPhone = this.contactPhone.textContent;
+        const contactEmail = this.contactEmail.textContent;
+        const contactAddress = this.contactAddress.textContent;
+        
+        const obj = {
+            name: contactName || null,
+            phone: contactPhone || null,
+            email: contactEmail || null,
+            address: contactAddress || null
+        }
+
+        this.edit(id, obj);
+        this.updateList();
     }
 
     onRemove(event, id) {
         this.remove(id);
-        
-        //this.updateList();
+        this.updateList();
     }
 }
 
