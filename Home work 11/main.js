@@ -66,19 +66,25 @@ class Contacts {
     }
 }
 
-let contact = new Contacts();
-
 class ContactsApp extends Contacts {
     constructor() {
         super(); 
 
-        this.init();
+        if (!this.storage) {
+            this.getData()
+            .then(data => {
+                this.storage = data;
+
+                this.init();
+            });
+        } else {
+            this.init();
+        }
     }
     
     init() {
         const addButtonContact = document.querySelector('.contact-form__show');
         const contactForm = document.querySelector('.contact-form');
-        //const formInput = document.querySelectorAll('.form__input');
         this.saveContact = document.querySelector('.form__save-button');
         this.contactList = document.querySelector('.contact-list');
         this.newContactName = document.querySelector('.input__name');
@@ -100,20 +106,73 @@ class ContactsApp extends Contacts {
             this.onAdd(event);
         });
         
-        const data = this.loadOutStorage();
-        if (data.length > 0) {
+        const data = this.storage;
+        if (data && data.length > 0) {
             this.data = data;
             this.updateList();
         }
     }
     
-    saveInStorage(data) {
-        const string = JSON.stringify(data);
-        localStorage.setItem('contacts', string);
+    async getData() {
+        return await fetch('https://jsonplaceholder.typicode.com/users')
+        .then (response => {
+            return response.json();
+        })
+        .then(data => {
+            data = data.map(users => {
+                return {
+                    data: {
+                        id: users.id,
+                        name: users.name,
+                        phone: users.username,
+                        email: users.email,
+                        address: users.address.city
+                    }
+                };
+            });
+            return data;
+        });
     }
 
-    loadOutStorage() {
-        let data = JSON.parse(localStorage.getItem('contacts'));
+    getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+          "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    setCookie(name, value, options = {}) {
+        options = {
+          path: '/',
+        ...options
+        };
+        if (options.expires instanceof Date) {
+          options.expires = options.expires.toUTCString();
+        }
+        let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        for (let optionKey in options) {
+          updatedCookie += "; " + optionKey;
+          let optionValue = options[optionKey];
+          if (optionValue !== true) {
+            updatedCookie += "=" + optionValue;
+          }
+        }
+        document.cookie = updatedCookie;
+    }
+
+    set storage(data) {
+        localStorage.setItem('contacts', JSON.stringify(data));
+        this.setCookie('contactsExp', '1', {'max-age': 10});
+    }
+
+    get storage() {
+        const contactsExp = this.getCookie('contactsExp');
+        if (!contactsExp) localStorage.removeItem('contacts')
+
+        let data = localStorage.getItem('contacts');
+        if (data && data.length == 0) return;
+
+        data = JSON.parse(data);
         if (!data || data.length == 0) return;
         
         data = data.map(user => {
@@ -156,8 +215,11 @@ class ContactsApp extends Contacts {
             contactItem.append(this.contactName, this.contactPhone, this.contactEmail, this.contactAddress, this.contactEdit, contactRemove);
 
             this.contactEdit.addEventListener('click', event => {
+                
                 this.onEdit(event);
+                
                 this.contactEdit.addEventListener('click', event => {
+                    console.log(event.target);
                     this.onSave(event, contact.data.id);
                 })
             });
@@ -166,7 +228,8 @@ class ContactsApp extends Contacts {
                 this.onRemove(event, contact.data.id);
             });
         });
-        this.saveInStorage(data);
+        
+        this.storage = data;
     }
 
     onAdd(event) {
@@ -201,12 +264,9 @@ class ContactsApp extends Contacts {
         this.contactAddress.setAttribute('contenteditable', true);
         //this.contactAddress.innerHTML = 'Address';
         this.contactEdit.innerHTML = 'Save';
-        
-        return event;
     }
 
     onSave(event, id) {
-        console.log(id);
         event.target.setAttribute('contenteditable', false);
         this.contactEdit.innerHTML = 'Edit';
 
